@@ -1,0 +1,13 @@
+boto3
+h5py
+matplotlib>=3.3.2
+sentencepiece
+torchtext
+unidecode
+youtokentome
+numpy
+tqdm>=4.41.0
+rapidfuzz
+gdown
+megatron-lm==1.1.5
+inflect
