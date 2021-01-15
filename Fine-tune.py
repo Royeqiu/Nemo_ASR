@@ -9,6 +9,7 @@ train_manifest_file = 'train_common_tw_manifest.pkl'
 test_manifest_file = 'test_common_tw_manifest.pkl'
 TRAIN_MANIFEST_PATH = 'train_manifest_path'
 TEST_MANIFEST_PATH = 'test_manifest_path'
+MODEL_PATH = 'model/'
 
 config_path = 'examples/asr/conf/quartznet_15x5_zh.yaml'
 def load_config(config_path):
@@ -26,14 +27,16 @@ if __name__ == '__main__':
     params = load_config(config_path)
     dataset_dict = {TRAIN_MANIFEST_PATH: os.path.join(manifest_path, train_manifest_file),
                     TEST_MANIFEST_PATH: os.path.join(manifest_path, test_manifest_file)}
+
+    #set training data path
     params = set_dataset_path(params,dataset_dict)
-    print(params.keys())
-    print(params['model']['train_ds'])
-    print(params['model']['validation_ds'])
+
+    #load model
     original_quartznet = nemo_asr.models.EncDecCTCModel.from_pretrained(model_name="QuartzNet15x5Base-Zh")
     original_quartznet.setup_training_data(train_data_config=params['model']['train_ds'])
     original_quartznet.setup_validation_data(val_data_config=params['model']['validation_ds'])
     trainer = pl.Trainer(max_epochs=1)
     trainer.fit(original_quartznet)
 
-#print(quartznet.decoder.vocabulary)
+    # save model
+    original_quartznet.sve_to(os.path.join(MODEL_PATH,'common_tw_asr.mod'))
